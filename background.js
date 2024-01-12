@@ -4,29 +4,35 @@
 chrome.tabs.onActivated.addListener(function (new_tab) {
     chrome.tabs.get(new_tab.tabId, function (tab) {
 
-        var request = new XMLHttpRequest();
-        
-        request.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
-            }
-        };
-        request.open("POST", "http://192.168.1.87:5000/send_url");
-        request.send(tab.url);
+      console.log('new tab was opened');
+            
+      // API endpoint where your current url is sent and processed
+      const apiUrl = 'http://192.168.1.87:5000/send_url';
+
+      // POST request using Fetch API
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tab.url)
+      })
     });
 });
 // sending my url when the tab has already been created and the user switches back to it
+// otherwise same function as above
 chrome.tabs.onUpdated.addListener((tabId, change, tab) => {
     
     if (tab.active && change.url) {
-        var request = new XMLHttpRequest();
 
-        request.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
-            }
-        };
-        request.open("POST", "http://192.168.1.87:5000/send_url");
-        request.send(change.url);
+         const apiUrl = 'http://192.168.1.87:5000/send_url';
+
+         fetch(apiUrl, {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify(tab.url)
+         })
     }
 });
